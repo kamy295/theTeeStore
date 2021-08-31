@@ -18,6 +18,12 @@ class App extends React.Component {
     };
   }
 
+  //create Order
+
+  createOrder = (order) => {
+    alert("Name" + order.name)
+  }
+
   // removes product added in cart
 
   removeFromCart = (product) => {
@@ -25,6 +31,9 @@ class App extends React.Component {
     this.setState({
       cartItems: cartItems.filter((x) => x._id !== product._id),
     });
+
+    // store data in localstorage to persist even after refresh
+
     localStorage.setItem(
       "cartItems",
       JSON.stringify(cartItems.filter((x) => x._id !== product._id))
@@ -46,7 +55,7 @@ class App extends React.Component {
       cartItems.push({ ...product, count: 1 });
     }
     this.setState({ cartItems });
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    localStorage.setItem("cartItems", JSON.stringify(cartItems)); // store data in localstorage to persist even after refresh
   };
 
   // sort the products
@@ -107,10 +116,12 @@ class App extends React.Component {
                 addToCart={this.addToCart}
               />
             </div>
-            <div className="sidebar">
+
+              <div className="sidebar">
               <Cart
                 cartItems={this.state.cartItems}
                 removeFromCart={this.removeFromCart}
+                createOrder={this.createOrder}
               />
             </div>
           </div>
