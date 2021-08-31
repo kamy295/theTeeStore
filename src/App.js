@@ -5,68 +5,77 @@ import Products from "./components/Products";
 import data from "./data.json";
 
 class App extends React.Component {
+  // constructor
   constructor() {
     super();
     this.state = {
       products: data.products,
-      cartItems: localStorage.getItem("cartItems") ? JSON.parse(localStorage.getItem("cartItems")) : [],
+      cartItems: localStorage.getItem("cartItems")
+        ? JSON.parse(localStorage.getItem("cartItems"))
+        : [],
       size: "",
       sort: "",
-
     };
   }
 
+  // removes product added in cart
 
   removeFromCart = (product) => {
     const cartItems = this.state.cartItems.slice();
-    this.setState({cartItems: cartItems.filter(x => x._id !== product._id) });
-    localStorage.setItem("cartItems", JSON.stringify(cartItems.filter((x) => x._id !== product._id))
-    ) 
-  }
+    this.setState({
+      cartItems: cartItems.filter((x) => x._id !== product._id),
+    });
+    localStorage.setItem(
+      "cartItems",
+      JSON.stringify(cartItems.filter((x) => x._id !== product._id))
+    );
+  };
+
+  // adds product to the cart
 
   addToCart = (product) => {
     const cartItems = this.state.cartItems.slice();
     let alreadyInCart = false;
-    cartItems.forEach(item => {
-      if(item._id === product._id) {
+    cartItems.forEach((item) => {
+      if (item._id === product._id) {
         item.count++;
         alreadyInCart = true;
       }
     });
-    if(!alreadyInCart) {
-      cartItems.push({...product, count: 1});
+    if (!alreadyInCart) {
+      cartItems.push({ ...product, count: 1 });
     }
-    this.setState({cartItems})
+    this.setState({ cartItems });
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }
+  };
+
+  // sort the products
 
   sortProducts = (event) => {
     console.log(event.target.value);
     const sort = event.target.value;
     this.setState((state) => ({
       sort: sort,
-      products: this.state.products
-      .slice()
-      .sort((a,b) =>
-        sort === "lowest" 
-        ? a.price > b.price 
-          ? 1 
-          : -1 
-        : sort === "highest" 
-        ? a.price < b.price
-          ? 1 
+      products: this.state.products.slice().sort((a, b) =>
+        sort === "lowest" // low to high
+          ? a.price > b.price
+            ? 1
+            : -1
+          : sort === "highest" // high to low
+          ? a.price < b.price
+            ? 1
+            : -1
+          : a._id < b._id
+          ? 1
           : -1
-        : a._id < b._id
-          ? 1 
-          : -1
-        ),
+      ),
     }));
-  }
+  };
 
   filterProducts = (event) => {
     console.log(event.target.value);
-    if(event.target.value === ""){
-      this.setState({size: event.target.value, product:data.products});
+    if (event.target.value === "") {
+      this.setState({ size: event.target.value, product: data.products });
     } else {
       this.setState({
         size: event.target.value,
@@ -74,7 +83,6 @@ class App extends React.Component {
           (product) => product.availableSizes.indexOf(event.target.value) >= 0
         ),
       });
-
     }
   };
 
@@ -94,15 +102,20 @@ class App extends React.Component {
                 filterProducts={this.filterProducts}
                 sortProducts={this.sortProducts}
               />
-              <Products products={this.state.products} addToCart={this.addToCart} />
+              <Products
+                products={this.state.products}
+                addToCart={this.addToCart}
+              />
             </div>
             <div className="sidebar">
-              <Cart cartItems={this.state.cartItems} 
-              removeFromCart={this.removeFromCart} />
+              <Cart
+                cartItems={this.state.cartItems}
+                removeFromCart={this.removeFromCart}
+              />
             </div>
           </div>
         </main>
-        <footer>All Rights Reserved</footer>
+        <footer>All Rights Reserved &copy; Kamlesh Kamble </footer>
       </div>
     );
   }
